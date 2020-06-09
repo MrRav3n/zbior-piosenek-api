@@ -17,7 +17,7 @@ router.get('/allBand', (req, res) => {
 
         } else {
             res.status(400);
-            res.send({error: 'Nie ma takiego zespołu'})
+            res.send({error: 'Nie ma takiego zespołu!'})
         }
     })
 })
@@ -36,7 +36,7 @@ router.post('/add/playlist', (req, res) => {
                 res.send({message: 'Udało się! Dodano nową playlistę'})
             } else {
                 res.status(404);
-                res.send({error: 'Błąd przy dodawaniu playlisty.'});
+                res.send({error: 'Błąd przy dodawaniu playlisty!'});
             }
         });
 
@@ -47,10 +47,10 @@ router.post('/add/songToPlaylist', (req, res) => {
         { _id: req.body.bandID, "playlist._id": req.body.playlistID },
         { $push: { "playlist.$.songs" : songID } }, (err, response) => {
             if (response.n) {
-                res.send({message: 'Udało się! Dodano nowy ul'})
+                res.send({message: 'Udało się! Dodano nową piosenkę!'})
             } else {
                 res.status(404);
-                res.send({error: 60});
+                res.send({error: 'Błąd przy dodawaniu nowej piosenki'});
             }
         });
 
@@ -67,7 +67,7 @@ router.post('/add/song', (req, res) => {
             res.send({message: 'udalo sie'});
         } else {
             res.status(400);
-            res.send({error: 'Nie działa pozdro'});
+            res.send({error: 'Nie udało się dodać nowej piosenki!'});
         }
     })
 })
