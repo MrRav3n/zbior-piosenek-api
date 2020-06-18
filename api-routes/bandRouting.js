@@ -41,6 +41,18 @@ router.post('/add/playlist', (req, res) => {
         });
 
 })
+router.post('/delete/song', (req, res) => {
+    const songID = {_id: req.body.songID}
+    Song.deleteOne(songID, (err, song) => {
+        if (song) {
+            res.send({message: 'Udalo się!'});
+        } else {
+            res.status(400);
+            res.send({error: 'Błąd przy usuwaniu piosenki!'});
+        }
+    })
+
+})
 router.post('/add/songToPlaylist', (req, res) => {
     const songID = req.body.songID
     Band.update(
