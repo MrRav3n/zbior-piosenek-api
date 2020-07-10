@@ -26,8 +26,6 @@ router.post('/add/playlist', (req, res) => {
     const BodyToSend = {
         name: req.body.playlistName,
     }
-    console.log(req.body.bandID)
-    console.log(req.body.playlistName)
     Band.update(
         { _id: req.body.bandID },
         { $push: { "playlist" : BodyToSend } }, (err, response) => {
@@ -53,6 +51,30 @@ router.post('/delete/song', (req, res) => {
     })
 
 })
+router.post('/delete/playlist', (req, res) => {
+    const playlistID = req.body.playlistID;
+    const bandID = req.body.bandID
+    Band.findOne({_id: bandID}, (err, band) => {
+        if (band) {
+            const index = band.playlist.findIndex(obj => obj._id == playlistID);
+
+            band.playlist.splice(index, 1);
+            Band.update({_id: bandID}, band, (err, band2) => {
+                if (band2.n) {
+                    res.send({message: 'Udało się! Usunięto playlistę.'})
+                } else {
+                    res.status(404);
+                    res.send({error: 403})
+                }
+            })
+        } else {
+            res.status(404);
+            res.send({error: 'Nie ma takiego zespołu'});
+        }
+
+    })
+
+})
 router.post('/add/songToPlaylist', (req, res) => {
     const songID = req.body.songID
     Band.update(
@@ -74,7 +96,6 @@ router.post('/add/song', (req, res) => {
         textToSend: req.body.textToSend,
     }
     Song.create(bodyToAdd, (err, song) => {
-        console.log(err);
         if (song) {
             res.send({message: 'udalo sie'});
         } else {
