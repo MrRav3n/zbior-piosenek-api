@@ -3,24 +3,52 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const Band = require('../models/Band')
 const Song = require('../models/Song')
+const bcrypt = require('bcrypt');
 
 router.use(bodyParser.json());
 
-router.get('/allBand', (req, res) => {
-    const name = req.query.bandName;
+router.post('/register', (req, res) => {
+    console.log(123);
+    const bodyToSend = {
+        name: req.body.name,
+        password: req.body.password,
+        email: req.body.email,
+    }
+    Band.create(bodyToSend, (err, band) => {
+        if (band) {
+            band.password = undefined;
+            res.send({band});
+        } else {
+            res.status(400);
+            res.send({error: 'Taki email już istnieje.'})
+        }
+    })
+})
+
+router.post('/login', (req, res) => {
+    const name = req.body.name;
+    const password = req.body.password;
     Band.findOne({name}, (err, band) => {
         if (band) {
-            Song.find({bandID: band._id}, (err, songs) => {
-                if (songs) {
-                    res.send({band, songs});
-                }
-            })
+                bcrypt.compare(password, band.password, (err, pass) => {
+                    if(pass) {
+                        Song.find({bandID: band._id}, (err, songs) => {
+                            if (songs) {
+                                band.password = undefined;
+                                res.send({band, songs});
+                            }
+                        })
+                    } else {
+                        res.status(400);
+                        res.send({error: 'Błędne hasło'})
+                    }
+                });
         } else {
             res.status(400);
             res.send({error: 'Nie ma takiego zespołu!'})
         }
     })
-})
+});
 
 router.post('/add/playlist', (req, res) => {
     const BodyToSend = {
