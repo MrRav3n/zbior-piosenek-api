@@ -3,6 +3,7 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const Band = require('../models/Band')
 const Song = require('../models/Song')
+
 router.use(bodyParser.json());
 
 router.get('/allBand', (req, res) => {
@@ -14,7 +15,6 @@ router.get('/allBand', (req, res) => {
                     res.send({band, songs});
                 }
             })
-
         } else {
             res.status(400);
             res.send({error: 'Nie ma takiego zespołu!'})
@@ -37,8 +37,8 @@ router.post('/add/playlist', (req, res) => {
                 res.send({error: 'Błąd przy dodawaniu playlisty!'});
             }
         });
-
 })
+
 router.post('/delete/song', (req, res) => {
     const songID = {_id: req.body.songID}
     Song.deleteOne(songID, (err, song) => {
@@ -51,6 +51,7 @@ router.post('/delete/song', (req, res) => {
     })
 
 })
+
 router.post('/delete/playlist', (req, res) => {
     const playlistID = req.body.playlistID;
     const bandID = req.body.bandID
@@ -71,10 +72,9 @@ router.post('/delete/playlist', (req, res) => {
             res.status(404);
             res.send({error: 'Nie ma takiego zespołu'});
         }
-
     })
-
 })
+
 router.post('/add/songToPlaylist', (req, res) => {
     const songID = req.body.songID
     Band.update(
@@ -87,8 +87,8 @@ router.post('/add/songToPlaylist', (req, res) => {
                 res.send({error: 'Błąd przy dodawaniu nowej piosenki'});
             }
         });
-
 })
+
 router.post('/add/song', (req, res) => {
     const bodyToAdd = {
         name: req.body.songName,
